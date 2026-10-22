@@ -17,3 +17,10 @@ Route::get('/education', function () {
 Route::get('/projects', function () {
     return view('projects');
 })->name('projects');
+
+
+
+use App\Http\Controllers\NewControllers;
+
+Route::get('/newpost', [NewControllers::class, 'index'])
+    ->name('newpost');
