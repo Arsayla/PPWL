@@ -19,8 +19,8 @@ Route::get('/projects', function () {
 })->name('projects');
 
 
-
 use App\Http\Controllers\NewControllers;
 
 Route::get('/newpost', [NewControllers::class, 'index'])
     ->name('newpost');
+    
