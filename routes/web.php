@@ -1,3 +1,4 @@
+```php
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/about', fn () => view('about'))->name('about');
+
 Route::get('/education', fn () => view('education'))->name('education');
 
 Route::get('/projects', function () {
@@ -31,28 +33,59 @@ Route::get('/projects', function () {
     ]);
 })->name('projects');
 
-// Halaman daftar post menjadi bagian dari navigasi website yang sama.
-Route::get('/newpost', [NewControllers::class, 'index'])->name('newpost');
+// Halaman daftar post.
+Route::get('/newpost', [NewControllers::class, 'index'])
+    ->name('newpost');
 
 // Autentikasi admin.
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.process');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')->name('logout');
+    ->middleware('auth')
+    ->name('logout');
 
 // Semua URL admin wajib login dan memiliki role admin.
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('/projects', AdminProjectController::class);
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
 
-    Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
-    Route::get('/skills/{skill}/edit', [SkillController::class, 'edit'])->name('skills.edit');
-    Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('skills.update');
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
 
-    Route::post('/projects/{project}/gallery', [ProjectGalleryController::class, 'store'])->name('projects.gallery.store');
-    Route::put('/projects/{project}/gallery/{image}', [ProjectGalleryController::class, 'updateCaption'])->name('projects.gallery.caption');
-    Route::delete('/projects/{project}/gallery/{image}', [ProjectGalleryController::class, 'destroy'])->name('projects.gallery.destroy');
-});
+        Route::resource('/projects', AdminProjectController::class);
+
+        Route::get('/skills', [SkillController::class, 'index'])
+            ->name('skills.index');
+
+        Route::get('/skills/{skill}/edit', [SkillController::class, 'edit'])
+            ->name('skills.edit');
+
+        Route::put('/skills/{skill}', [SkillController::class, 'update'])
+            ->name('skills.update');
+
+        // Upload gambar galeri.
+        Route::post(
+            '/projects/{project}/gallery',
+            [ProjectGalleryController::class, 'store']
+        )->name('projects.gallery.store');
+
+        // Mengubah caption gambar galeri.
+        Route::put(
+            '/projects/{project}/gallery/{image}',
+            [ProjectGalleryController::class, 'updateCaption']
+        )->name('projects.gallery.caption');
+
+        // Menghapus gambar galeri.
+        Route::delete(
+            '/projects/{project}/gallery/{image}',
+            [ProjectGalleryController::class, 'destroy']
+        )->name('projects.gallery.destroy');
+    });
+```
